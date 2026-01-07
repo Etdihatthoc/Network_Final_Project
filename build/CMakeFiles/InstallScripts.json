@@ -1,0 +1,12 @@
+{
+	"InstallScripts" : 
+	[
+		"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/cmake_install.cmake",
+		"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/common/cmake_install.cmake",
+		"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/scripts/cmake_install.cmake",
+		"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/server/cmake_install.cmake",
+		"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/client/cmake_install.cmake",
+		"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/tests/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
