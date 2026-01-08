@@ -16,9 +16,13 @@ Xây dựng ứng dụng thi trắc nghiệm trực tuyến
 + Thống kê bằng đồ thị về các bài thi người dùng đã làm 
 - Giao diện đồ họa . 
 Trong đó cách tính điểm sẽ là: 
-"- Xử lý truyền dòng: 1 điểm
+"
+- Xử lý truyền dòng: 1 điểm
+=>> sử dụng TCP socket  length‑prefix 4 byte + JSON Client gửi LOGIN → encode_frame() tạo frame → server read_frame() → decode_frame()
 - Cài đặt cơ chế vào/ra socket trên server: 2 điểm
+=>> socket() → bind() → listen() → accept()
 - Đăng ký và quản lý tài khoản: 2 điểm
+
 - Đăng nhập và quản lý phiên: 2 điểm
 - Kiểm soát quyền truy cập: 1 điểm
 - Tham gia chế độ luyện tập: 1 điểm
@@ -51,3 +55,12 @@ scripts/
 Seeder DB và echo client: giúp hiểu dữ liệu test và cách khởi tạo.
 tests/
 Unit test codec: cách validate giao thức.
+
+
+Auto‑refresh ROOM_LIST mỗi 5s (polling)
+Đếm giờ + auto‑submit khi hết thời gian (client‑side)
+Room password (join bằng pass)
+Session token + TLL(3600s)
+Hash password
+Giới hạn payload để tránh gói quá lớn
+DELETE_ROOM / FINISH_ROOM
