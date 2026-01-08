@@ -100,15 +100,27 @@ std::vector<RoomInfo> RoomManager::list_rooms(const std::optional<std::string>& 
   while (sqlite3_step(stmt) == SQLITE_ROW) {
     RoomInfo r;
     r.id = sqlite3_column_int(stmt, 0);
-    r.code = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
-    r.name = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
-    r.description = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
+
+    // Safe string extraction with NULL checks
+    const unsigned char* code_ptr = sqlite3_column_text(stmt, 1);
+    r.code = code_ptr ? reinterpret_cast<const char*>(code_ptr) : "";
+
+    const unsigned char* name_ptr = sqlite3_column_text(stmt, 2);
+    r.name = name_ptr ? reinterpret_cast<const char*>(name_ptr) : "";
+
+    const unsigned char* desc_ptr = sqlite3_column_text(stmt, 3);
+    r.description = desc_ptr ? reinterpret_cast<const char*>(desc_ptr) : "";
+
     r.duration_seconds = sqlite3_column_int(stmt, 4);
-    r.status = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5));
+
+    const unsigned char* status_ptr = sqlite3_column_text(stmt, 5);
+    r.status = status_ptr ? reinterpret_cast<const char*>(status_ptr) : "";
+
     r.creator_id = sqlite3_column_int(stmt, 6);
-    r.creator_name = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 7)
-                                                   ? sqlite3_column_text(stmt, 7)
-                                                   : reinterpret_cast<const unsigned char*>(""));
+
+    const unsigned char* creator_ptr = sqlite3_column_text(stmt, 7);
+    r.creator_name = creator_ptr ? reinterpret_cast<const char*>(creator_ptr) : "";
+
     r.participant_count = sqlite3_column_int(stmt, 8);
     r.started_at = static_cast<std::uint64_t>(sqlite3_column_int64(stmt, 9));
     rooms.push_back(std::move(r));
