@@ -106,9 +106,29 @@ function handleMessage(m) {
   } else if (m.action === "JOIN_ROOM") {
     // join success
     state.joined_room_id = m.data.room_id;
+
+    // Clear exam state cũ khi join room mới
+    state.exam = { exam_id: -1, questions: [] };
+    state.exam_auto_submitted = false;
+    state.exam_end_time = 0;
+    examContainer.innerHTML = "";
+
+    // Stop old timer if exists
+    if (examTimerInterval) clearInterval(examTimerInterval);
+    if (state.exam_timer_sync_interval) clearInterval(state.exam_timer_sync_interval);
+    examTimerInterval = null;
+    state.exam_timer_sync_interval = null;
+
+    // Clear timer display
+    const timerEl = document.getElementById("exam-timer");
+    if (timerEl) {
+      timerEl.textContent = "Timer: --:--";
+      timerEl.classList.remove("timer-warning", "timer-critical");
+    }
+
     toast(`✅ Đã tham gia phòng #${m.data.room_id}`, "success");
 
-    // Enable buttons sau khi join
+    // Update buttons sau khi join
     updateExamButtonStates();
 
     // Auto refresh để cập nhật participant count từ server
@@ -128,6 +148,7 @@ function handleMessage(m) {
     renderExam();
     showPage("student-exam");
     startExamTimer();
+    updateExamButtonStates();  // Update button states after getting paper
     toast("Exam paper loaded", "info");
   } else if (m.action === "START_PRACTICE") {
     state.practice.practice_id = m.data.practice_id;
@@ -214,11 +235,50 @@ function handleMessage(m) {
       if (state.role === "STUDENT") showPage("student-history");
       else showPage("teacher-results");
     } else {
-      // After submitting exam/practice, show success and refresh history
+      // After submitting exam/practice, completely reset state
+      if (m.action === "SUBMIT_EXAM") {
+        // Stop all exam timers
+        if (examTimerInterval) clearInterval(examTimerInterval);
+        if (state.exam_timer_sync_interval) clearInterval(state.exam_timer_sync_interval);
+        examTimerInterval = null;
+        state.exam_timer_sync_interval = null;
+
+        // Clear exam state completely
+        state.exam = { exam_id: -1, questions: [] };
+        state.exam_auto_submitted = true;
+        state.exam_end_time = 0;
+
+        // Clear exam UI - show success message
+        examContainer.innerHTML = '<div style="text-align: center; padding: 60px;"><h2 style="color: #10b981;">✅ Đã nộp bài thành công!</h2><p style="color: #6b7280; margin-top: 20px;">Vui lòng chọn phòng thi khác hoặc xem lịch sử bài thi.</p></div>';
+
+        // Reset timer display
+        const timerEl = document.getElementById("exam-timer");
+        if (timerEl) {
+          timerEl.textContent = "Timer: --:--";
+          timerEl.classList.remove("timer-warning", "timer-critical");
+          timerEl.style.background = "";
+        }
+
+        // Reset buttons to initial state
+        updateExamButtonStates();
+
+      } else if (m.action === "SUBMIT_PRACTICE") {
+        // Stop practice timer
+        if (practiceTimerInterval) clearInterval(practiceTimerInterval);
+        practiceTimerInterval = null;
+
+        // Clear practice state
+        state.practice = { practice_id: -1, questions: [] };
+        state.practice_auto_submitted = true;
+        state.practice_end_time = 0;
+        pracContainer.innerHTML = '<div style="text-align: center; padding: 60px;"><h2 style="color: #10b981;">✅ Hoàn thành luyện tập!</h2></div>';
+      }
+
+      // Show history page with results
       displayHistory(m.data);
       showPage("student-history");
       send("GET_USER_HISTORY", {});
-      toast("Submitted successfully", "success");
+      toast("✅ Nộp bài thành công!", "success");
     }
   } else if (m.action === "DELETE_ROOM") {
     toast("Room deleted successfully", "success");
@@ -805,16 +865,37 @@ function updateExamRoomInfo() {
 
 function updateExamButtonStates() {
   const joined = (state.joined_room_id === state.selected_room_id);
+  const hasExam = (state.exam.exam_id > 0);
   const btnJoin = document.getElementById("btn-join-room");
   const btnGetPaper = document.getElementById("btn-get-paper");
   const btnSubmit = document.getElementById("btn-submit-exam");
 
-  // Join button luôn enabled nếu đã select room
-  if (btnJoin) btnJoin.disabled = !state.selected_room_id;
+  // Join button: disable nếu chưa select room HOẶC đã join rồi
+  if (btnJoin) {
+    btnJoin.disabled = !state.selected_room_id || joined;
+    if (joined) {
+      btnJoin.textContent = "✅ Đã tham gia";
+      btnJoin.style.background = "#6b7280";  // Gray
+    } else {
+      btnJoin.textContent = "Tham gia phòng";
+      btnJoin.style.background = "";
+    }
+  }
 
-  // Các buttons khác chỉ enable khi đã join
-  if (btnGetPaper) btnGetPaper.disabled = !joined;
-  if (btnSubmit) btnSubmit.disabled = !joined;
+  // Get Paper button: disable nếu chưa join HOẶC đã get paper rồi
+  if (btnGetPaper) {
+    btnGetPaper.disabled = !joined || hasExam;
+    if (hasExam) {
+      btnGetPaper.textContent = "✅ Đã lấy đề";
+      btnGetPaper.style.background = "#6b7280";  // Gray
+    } else {
+      btnGetPaper.textContent = "Lấy đề thi";
+      btnGetPaper.style.background = "";
+    }
+  }
+
+  // Submit button: chỉ enable khi đã get paper
+  if (btnSubmit) btnSubmit.disabled = !hasExam;
 }
 
 function startRoomsAutoRefresh() {
@@ -873,19 +954,22 @@ function startExamTimer() {
       }
 
       if (localRemaining === 0) {
-        toast("Exam time over - auto submitting", "error", 4000);
-        autoSubmitExam();
+        toast("⏰ Hết giờ - Tự động nộp bài", "error", 4000);
         clearInterval(examTimerInterval);
+        clearInterval(serverSyncInterval);
+        autoSubmitExam();
       }
     }
   }, 1000);
 
   // Server sync every 5 seconds
   const serverSyncInterval = setInterval(() => {
-    if (state.exam.exam_id > 0 && !state.exam_auto_submitted) {
+    // Double check exam_id is still valid before syncing
+    if (state.exam && state.exam.exam_id && state.exam.exam_id > 0 && !state.exam_auto_submitted) {
       syncWithServer();
     } else {
       clearInterval(serverSyncInterval);
+      clearInterval(examTimerInterval);
     }
   }, 5000);
 
@@ -896,10 +980,10 @@ function startExamTimer() {
   window.updateExamTimer = (remaining_sec) => {
     localRemaining = remaining_sec > 0 ? remaining_sec : 0;
     if (localRemaining === 0 && !state.exam_auto_submitted) {
-      toast("Exam time over - auto submitting", "error", 4000);
-      autoSubmitExam();
+      toast("⏰ Hết giờ - Tự động nộp bài", "error", 4000);
       clearInterval(examTimerInterval);
       clearInterval(serverSyncInterval);
+      autoSubmitExam();
     }
   };
 }
@@ -922,7 +1006,15 @@ function startPracticeTimer() {
 function autoSubmitExam() {
   if (state.exam_auto_submitted) return;
   if (state.joined_room_id !== state.selected_room_id || state.exam.exam_id <= 0) return;
+
   state.exam_auto_submitted = true;
+
+  // Stop all timers immediately
+  if (examTimerInterval) clearInterval(examTimerInterval);
+  if (state.exam_timer_sync_interval) clearInterval(state.exam_timer_sync_interval);
+  examTimerInterval = null;
+  state.exam_timer_sync_interval = null;
+
   const answers = state.exam.questions.map((q) => ({
     question_id: q.id,
     selected_option: q.answer || "A",

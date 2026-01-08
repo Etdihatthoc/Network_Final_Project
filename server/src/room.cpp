@@ -37,14 +37,15 @@ std::optional<RoomInfo> RoomManager::create_room(int creator_id,
                                                  const std::string& room_pass,
                                                  const RoomSettings& settings,
                                                  std::string* error) {
+  std::lock_guard<std::recursive_mutex> lock(db_mutex_);
   if (!open_db()) {
     if (error) *error = "DB open failed";
     return std::nullopt;
   }
 
   std::string code = "ROOM-" + std::to_string(now_seconds()) + "-" + std::to_string(creator_id);
-  const char* sql = "INSERT INTO rooms(code, name, description, duration_sec, status, room_pass, creator_id, scheduled_start, created_at) "
-                    "VALUES(?,?,?,?, 'WAITING', ?, ?, NULL, ?);";
+  const char* sql = "INSERT INTO rooms(code, name, description, duration_sec, total_questions, easy_count, medium_count, hard_count, status, room_pass, creator_id, scheduled_start, created_at) "
+                    "VALUES(?,?,?,?, ?, ?, ?, ?, 'WAITING', ?, ?, NULL, ?);";
 
   sqlite3_stmt* stmt = nullptr;
   if (sqlite3_prepare_v2(db_, sql, -1, &stmt, nullptr) != SQLITE_OK) {
@@ -56,9 +57,13 @@ std::optional<RoomInfo> RoomManager::create_room(int creator_id,
   sqlite3_bind_text(stmt, 2, name.c_str(), -1, SQLITE_TRANSIENT);
   sqlite3_bind_text(stmt, 3, description.c_str(), -1, SQLITE_TRANSIENT);
   sqlite3_bind_int(stmt, 4, settings.duration_seconds);
-  sqlite3_bind_text(stmt, 5, room_pass.c_str(), -1, SQLITE_TRANSIENT);
-  sqlite3_bind_int(stmt, 6, creator_id);
-  sqlite3_bind_int64(stmt, 7, static_cast<sqlite3_int64>(now_seconds()));
+  sqlite3_bind_int(stmt, 5, settings.total_questions);
+  sqlite3_bind_int(stmt, 6, settings.easy);
+  sqlite3_bind_int(stmt, 7, settings.medium);
+  sqlite3_bind_int(stmt, 8, settings.hard);
+  sqlite3_bind_text(stmt, 9, room_pass.c_str(), -1, SQLITE_TRANSIENT);
+  sqlite3_bind_int(stmt, 10, creator_id);
+  sqlite3_bind_int64(stmt, 11, static_cast<sqlite3_int64>(now_seconds()));
 
   if (sqlite3_step(stmt) != SQLITE_DONE) {
     if (error) *error = sqlite3_errmsg(db_);
@@ -75,6 +80,8 @@ std::optional<RoomInfo> RoomManager::create_room(int creator_id,
 
 std::vector<RoomInfo> RoomManager::list_rooms(const std::optional<std::string>& status_filter,
                                               std::string* error) {
+  std::lock_guard<std::recursive_mutex> lock(db_mutex_);  // Thread-safe database access
+
   std::vector<RoomInfo> rooms;
   if (!open_db()) {
     if (error) *error = "DB open failed";
@@ -130,6 +137,7 @@ std::vector<RoomInfo> RoomManager::list_rooms(const std::optional<std::string>& 
 }
 
 bool RoomManager::join_room(int room_id, int user_id, const std::string& pass, std::string* error) {
+  std::lock_guard<std::recursive_mutex> lock(db_mutex_);
   if (!open_db()) {
     if (error) *error = "DB open failed";
     return false;
@@ -178,6 +186,7 @@ bool RoomManager::join_room(int room_id, int user_id, const std::string& pass, s
 }
 
 bool RoomManager::start_room(int room_id, int creator_id, std::string* error) {
+  std::lock_guard<std::recursive_mutex> lock(db_mutex_);
   if (!open_db()) {
     if (error) *error = "DB open failed";
     return false;
@@ -236,6 +245,43 @@ std::vector<nlohmann::json> RoomManager::pick_questions(const RoomSettings& sett
   add("EASY", settings.easy);
   add("MEDIUM", settings.medium);
   add("HARD", settings.hard);
+  if (settings.total_questions > 0 && static_cast<int>(qs.size()) < settings.total_questions) {
+    int missing = settings.total_questions - static_cast<int>(qs.size());
+    std::vector<int> ids;
+    ids.reserve(qs.size());
+    for (const auto& q : qs) {
+      ids.push_back(q["question_id"].get<int>());
+    }
+    std::string sql = "SELECT id, text, options_json, topic, difficulty FROM questions";
+    if (!ids.empty()) {
+      sql += " WHERE id NOT IN (";
+      for (size_t i = 0; i < ids.size(); ++i) {
+        if (i > 0) sql += ",";
+        sql += "?";
+      }
+      sql += ")";
+    }
+    sql += " ORDER BY RANDOM() LIMIT ?";
+    sqlite3_stmt* stmt = nullptr;
+    if (sqlite3_prepare_v2(db_, sql.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
+      int idx = 1;
+      for (int id : ids) {
+        sqlite3_bind_int(stmt, idx++, id);
+      }
+      sqlite3_bind_int(stmt, idx, missing);
+      while (sqlite3_step(stmt) == SQLITE_ROW) {
+        nlohmann::json q;
+        q["question_id"] = sqlite3_column_int(stmt, 0);
+        q["question_text"] = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+        auto opts_raw = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+        q["options"] = nlohmann::json::parse(opts_raw ? opts_raw : "[]");
+        q["topic"] = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
+        q["difficulty"] = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
+        qs.push_back(std::move(q));
+      }
+      sqlite3_finalize(stmt);
+    }
+  }
   // Trim to total_questions if overshoot
   if (settings.total_questions > 0 && static_cast<int>(qs.size()) > settings.total_questions) {
     std::shuffle(qs.begin(), qs.end(), rng_);
@@ -387,12 +433,13 @@ bool RoomManager::save_exam_questions(int exam_id, const std::vector<nlohmann::j
 }
 
 std::optional<ExamPaper> RoomManager::get_exam_paper(int room_id, int user_id, std::string* error) {
+  std::lock_guard<std::recursive_mutex> lock(db_mutex_);
   if (!open_db()) {
     if (error) *error = "DB open failed";
     return std::nullopt;
   }
   // fetch room info
-  const char* room_sql = "SELECT duration_sec, status FROM rooms WHERE id = ?;";
+  const char* room_sql = "SELECT duration_sec, status, total_questions, easy_count, medium_count, hard_count FROM rooms WHERE id = ?;";
   sqlite3_stmt* stmt = nullptr;
   if (sqlite3_prepare_v2(db_, room_sql, -1, &stmt, nullptr) != SQLITE_OK) {
     if (error) *error = sqlite3_errmsg(db_);
@@ -406,6 +453,10 @@ std::optional<ExamPaper> RoomManager::get_exam_paper(int room_id, int user_id, s
   }
   int duration_sec = sqlite3_column_int(stmt, 0);
   std::string status = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+  int total_questions = sqlite3_column_int(stmt, 2);
+  int easy = sqlite3_column_int(stmt, 3);
+  int medium = sqlite3_column_int(stmt, 4);
+  int hard = sqlite3_column_int(stmt, 5);
   sqlite3_finalize(stmt);
 
   // Only allow getting exam paper when room is IN_PROGRESS
@@ -444,11 +495,20 @@ std::optional<ExamPaper> RoomManager::get_exam_paper(int room_id, int user_id, s
 
   // First time: pick new questions and persist
   RoomSettings settings;
-  settings.total_questions = 10;
   settings.duration_seconds = duration_sec;
-  settings.easy = 4;
-  settings.medium = 4;
-  settings.hard = 2;
+  settings.total_questions = total_questions;
+  settings.easy = easy;
+  settings.medium = medium;
+  settings.hard = hard;
+  if (settings.total_questions <= 0) {
+    settings.total_questions = settings.easy + settings.medium + settings.hard;
+  }
+  if (settings.total_questions <= 0) {
+    settings.total_questions = 10;
+    settings.easy = 4;
+    settings.medium = 4;
+    settings.hard = 2;
+  }
 
   questions = pick_questions(settings, error);
   if (questions.empty()) {
@@ -488,6 +548,7 @@ std::optional<ExamPaper> RoomManager::get_exam_paper(int room_id, int user_id, s
 
 bool RoomManager::submit_answers(int exam_id, const std::vector<std::pair<int, std::string>>& answers,
                                  std::string* error) {
+  std::lock_guard<std::recursive_mutex> lock(db_mutex_);
   if (!open_db()) {
     if (error) *error = "DB open failed";
     return false;
@@ -518,6 +579,7 @@ bool RoomManager::submit_answers(int exam_id, const std::vector<std::pair<int, s
 
 bool RoomManager::submit_exam(int exam_id, const std::vector<std::pair<int, std::string>>& answers,
                               int& correct, int& total, double& score, std::string* error) {
+  std::lock_guard<std::recursive_mutex> lock(db_mutex_);
   if (!open_db()) return false;
 
   // FIX: Check if exam already submitted
@@ -617,6 +679,7 @@ bool RoomManager::is_participant(int room_id, int user_id) {
 }
 
 bool RoomManager::exam_owned_by(int exam_id, int user_id) {
+  std::lock_guard<std::recursive_mutex> lock(db_mutex_);
   const char* sql = "SELECT 1 FROM exams WHERE id = ? AND user_id = ?;";
   sqlite3_stmt* stmt = nullptr;
   if (sqlite3_prepare_v2(db_, sql, -1, &stmt, nullptr) != SQLITE_OK) return false;
@@ -633,6 +696,7 @@ std::optional<PracticePaper> RoomManager::start_practice(int user_id,
                                                          const std::vector<std::string>& difficulties,
                                                          const std::vector<std::string>& topics,
                                                          std::string* error) {
+  std::lock_guard<std::recursive_mutex> lock(db_mutex_);
   if (!open_db()) {
     if (error) *error = "DB open failed";
     return std::nullopt;
@@ -679,6 +743,7 @@ bool RoomManager::submit_practice(int practice_id,
                                   int& total,
                                   double& score,
                                   std::string* error) {
+  std::lock_guard<std::recursive_mutex> lock(db_mutex_);
   if (!open_db()) {
     if (error) *error = "DB open failed";
     return false;
@@ -720,6 +785,7 @@ bool RoomManager::submit_practice(int practice_id,
 }
 
 std::optional<RoomResult> RoomManager::get_room_results(int room_id, std::string* error) {
+  std::lock_guard<std::recursive_mutex> lock(db_mutex_);
   RoomResult result;
   if (!open_db()) {
     if (error) *error = "DB open failed";
@@ -764,6 +830,7 @@ std::optional<RoomResult> RoomManager::get_room_results(int room_id, std::string
 }
 
 std::optional<UserHistory> RoomManager::get_user_history(int user_id, std::string* error) {
+  std::lock_guard<std::recursive_mutex> lock(db_mutex_);
   UserHistory hist;
   hist.exams = nlohmann::json::array();
   hist.practices = nlohmann::json::array();
@@ -820,6 +887,7 @@ std::optional<UserHistory> RoomManager::get_user_history(int user_id, std::strin
 }
 
 std::optional<RoomDetails> RoomManager::get_room_details(int room_id, std::string* error) {
+  std::lock_guard<std::recursive_mutex> lock(db_mutex_);
   if (!open_db()) {
     if (error) *error = "DB open failed";
     return std::nullopt;
@@ -902,6 +970,7 @@ std::optional<RoomDetails> RoomManager::get_room_details(int room_id, std::strin
 }
 
 int RoomManager::auto_submit_expired_exams(std::string* error) {
+  std::lock_guard<std::recursive_mutex> lock(db_mutex_);
   if (!open_db()) {
     if (error) *error = "DB open failed";
     return -1;
@@ -999,8 +1068,16 @@ int RoomManager::auto_submit_expired_exams(std::string* error) {
 }
 
 std::optional<RoomManager::TimerStatus> RoomManager::get_timer_status(int exam_id, std::string* error) {
+  std::lock_guard<std::recursive_mutex> lock(db_mutex_);  // Thread-safe database access
+
   if (!open_db()) {
     if (error) *error = "DB open failed";
+    return std::nullopt;
+  }
+
+  // Validate exam_id first
+  if (exam_id <= 0) {
+    if (error) *error = "invalid exam_id";
     return std::nullopt;
   }
 
@@ -1012,27 +1089,35 @@ std::optional<RoomManager::TimerStatus> RoomManager::get_timer_status(int exam_i
       "WHERE e.id = ?;";
 
   sqlite3_stmt* stmt = nullptr;
-  if (sqlite3_prepare_v2(db_, sql, -1, &stmt, nullptr) != SQLITE_OK) {
-    if (error) *error = sqlite3_errmsg(db_);
+  int rc = sqlite3_prepare_v2(db_, sql, -1, &stmt, nullptr);
+  if (rc != SQLITE_OK) {
+    // Copy error message immediately before it gets invalidated
+    if (error) {
+      const char* err_msg = sqlite3_errmsg(db_);
+      *error = std::string(err_msg ? err_msg : "prepare failed");
+    }
     return std::nullopt;
   }
 
   sqlite3_bind_int(stmt, 1, exam_id);
 
-  if (sqlite3_step(stmt) != SQLITE_ROW) {
+  rc = sqlite3_step(stmt);
+  if (rc != SQLITE_ROW) {
     sqlite3_finalize(stmt);
     if (error) *error = "exam not found";
     return std::nullopt;
   }
 
+  // Safely extract values with bounds checking
   std::uint64_t exam_start = static_cast<std::uint64_t>(sqlite3_column_int64(stmt, 0));
   std::uint64_t room_started = static_cast<std::uint64_t>(sqlite3_column_int64(stmt, 1));
   std::uint32_t duration = static_cast<std::uint32_t>(sqlite3_column_int(stmt, 2));
 
   sqlite3_finalize(stmt);
 
-  // Use room's started_at if available, otherwise fall back to exam's start_at
-  std::uint64_t started_at = (room_started > 0) ? room_started : exam_start;
+  // IMPORTANT: Use exam's start_at (individual student timer)
+  // Each student gets their own timer starting from when they get the paper
+  std::uint64_t started_at = exam_start;
   std::uint64_t current_time = now_seconds();
   std::uint64_t elapsed = (current_time > started_at) ? (current_time - started_at) : 0;
   std::int32_t remaining = static_cast<std::int32_t>(duration) - static_cast<std::int32_t>(elapsed);
@@ -1047,6 +1132,7 @@ std::optional<RoomManager::TimerStatus> RoomManager::get_timer_status(int exam_i
 }
 
 bool RoomManager::delete_room(int room_id, int user_id, std::string* error) {
+  std::lock_guard<std::recursive_mutex> lock(db_mutex_);
   if (!open_db()) {
     if (error) *error = "DB open failed";
     return false;
@@ -1106,6 +1192,7 @@ bool RoomManager::delete_room(int room_id, int user_id, std::string* error) {
 }
 
 bool RoomManager::finish_room(int room_id, int user_id, std::string* error) {
+  std::lock_guard<std::recursive_mutex> lock(db_mutex_);
   if (!open_db()) {
     if (error) *error = "DB open failed";
     return false;

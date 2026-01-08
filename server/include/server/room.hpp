@@ -1,5 +1,6 @@
 #pragma once
 
+#include <mutex>
 #include <optional>
 #include <random>
 #include <string>
@@ -174,6 +175,7 @@ class RoomManager {
   std::string db_path_;
   sqlite3* db_{nullptr};
   std::mt19937 rng_;
+  mutable std::recursive_mutex db_mutex_;  // Protect database access from multiple threads
 };
 
 }  // namespace quiz::server

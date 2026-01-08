@@ -404,31 +404,56 @@ int main(int argc, char** argv) {
             .count());
     resp.status = Status::Error;
 
-    std::string error;
-    auto session = auth.validate(req.session_id, &error);
-    if (!session) {
-      resp.error_code = "UNAUTHORIZED";
-      resp.error_message = error;
+    try {
+      std::string error;
+      auto session = auth.validate(req.session_id, &error);
+      if (!session) {
+        resp.error_code = "UNAUTHORIZED";
+        resp.error_message = std::move(error);
+        return resp;
+      }
+
+      // Safe extraction with explicit type checking
+      int exam_id = -1;
+      if (req.data.contains("exam_id")) {
+        if (req.data["exam_id"].is_number_integer()) {
+          exam_id = req.data["exam_id"].get<int>();
+        }
+      }
+
+      if (exam_id <= 0) {
+        resp.error_code = "INVALID_REQUEST";
+        resp.error_message = "exam_id required and must be positive integer";
+        return resp;
+      }
+
+      std::string timer_error;
+      auto timer = room_mgr.get_timer_status(exam_id, &timer_error);
+      if (!timer) {
+        resp.error_code = "TIMER_FAILED";
+        resp.error_message = timer_error.empty() ? "exam not found" : std::move(timer_error);
+        return resp;
+      }
+
+      resp.status = Status::Success;
+      resp.data = nlohmann::json::object();
+      resp.data["started_at"] = static_cast<std::int64_t>(timer->started_at);
+      resp.data["duration_sec"] = static_cast<std::int32_t>(timer->duration_sec);
+      resp.data["remaining_sec"] = static_cast<std::int32_t>(timer->remaining_sec);
+      resp.data["server_time"] = static_cast<std::int64_t>(timer->server_time);
+      return resp;
+
+    } catch (const std::exception& ex) {
+      std::cout << "[ERROR] GET_TIMER_STATUS exception: " << ex.what() << "\n";
+      resp.error_code = "INTERNAL_ERROR";
+      resp.error_message = "internal server error";
+      return resp;
+    } catch (...) {
+      std::cout << "[ERROR] GET_TIMER_STATUS unknown exception\n";
+      resp.error_code = "INTERNAL_ERROR";
+      resp.error_message = "unknown exception";
       return resp;
     }
-    int exam_id = req.data.value("exam_id", -1);
-    if (exam_id <= 0) {
-      resp.error_code = "INVALID_REQUEST";
-      resp.error_message = "exam_id required";
-      return resp;
-    }
-    auto timer = room_mgr.get_timer_status(exam_id, &error);
-    if (!timer) {
-      resp.error_code = "TIMER_FAILED";
-      resp.error_message = error;
-      return resp;
-    }
-    resp.status = Status::Success;
-    resp.data = {{"started_at", timer->started_at},
-                 {"duration_sec", timer->duration_sec},
-                 {"remaining_sec", timer->remaining_sec},
-                 {"server_time", timer->server_time}};
-    return resp;
   });
 
   // SUBMIT_ANSWER (patch)
