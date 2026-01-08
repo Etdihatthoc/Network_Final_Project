@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = -DASIO_STANDALONE
 
-CXX_INCLUDES = -I"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/common/include" -I"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/third_party/nlohmann_json/include" -I"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/third_party/spdlog/include" -I"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/third_party/asio/include"
+CXX_INCLUDES = -I"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/common/include" -I"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/third_party/nlohmann_json/include" -I"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/third_party/spdlog/include" -I"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/third_party/asio/include" -isystem /opt/homebrew/Cellar/openssl@3/3.6.0/include
 
 CXX_FLAGSarm64 = -std=c++20 -arch arm64 -fPIE
 

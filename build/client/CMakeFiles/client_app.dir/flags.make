@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = -DASIO_STANDALONE
 
-CXX_INCLUDES = -I"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/client/include" -I"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/common/include" -I"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/third_party/nlohmann_json/include" -I"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/third_party/spdlog/include" -I"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/third_party/asio/include" -I"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/third_party/imgui" -I"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/third_party/imgui/backends" -I/opt/homebrew/Cellar/sdl2/2.32.10/include -isystem /opt/homebrew/Cellar/sdl2/2.32.10/include/SDL2
+CXX_INCLUDES = -I"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/client/include" -I"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/common/include" -I"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/third_party/nlohmann_json/include" -I"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/third_party/spdlog/include" -I"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/third_party/asio/include" -I"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/third_party/imgui" -I"/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/third_party/imgui/backends" -I/opt/homebrew/Cellar/sdl2/2.32.10/include -isystem /opt/homebrew/Cellar/openssl@3/3.6.0/include -isystem /opt/homebrew/Cellar/sdl2/2.32.10/include/SDL2
 
 CXX_FLAGSarm64 = -std=c++20 -arch arm64 -fPIE
 

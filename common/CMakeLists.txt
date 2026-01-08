@@ -1,6 +1,10 @@
+# Find OpenSSL for AES encryption
+find_package(OpenSSL REQUIRED)
+
 add_library(common STATIC
   src/codec.cpp
   src/crypto.cpp
+  src/aes_crypto.cpp
   src/placeholder.cpp
 )
 
@@ -12,4 +16,5 @@ target_include_directories(common
 target_link_libraries(common
   PUBLIC
     project_deps
+    OpenSSL::Crypto
 )

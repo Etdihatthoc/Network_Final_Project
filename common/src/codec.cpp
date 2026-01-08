@@ -1,4 +1,5 @@
 #include "common/codec.hpp"
+#include "common/aes_crypto.hpp"
 
 #include <array>
 #include <cerrno>
@@ -237,13 +238,25 @@ std::vector<std::uint8_t> encode_frame(const Message& msg, std::string& error) {
     return {};
   }
 
+  // Encrypt the JSON payload using AES-256-CBC
+  auto encrypted = encrypt_aes_cbc(
+      reinterpret_cast<const std::uint8_t*>(json_str.data()),
+      json_str.size(),
+      error
+  );
+  if (encrypted.empty()) {
+    error = "encryption failed: " + error;
+    return {};
+  }
+
+  // Build frame with encrypted payload
   std::vector<std::uint8_t> frame;
-  frame.resize(kFramePrefixBytes + json_str.size());
-  std::uint32_t len = static_cast<std::uint32_t>(json_str.size());
+  frame.resize(kFramePrefixBytes + encrypted.size());
+  std::uint32_t len = static_cast<std::uint32_t>(encrypted.size());
   len = to_be32(len);
   std::memcpy(frame.data(), &len, sizeof(len));
-  std::memcpy(frame.data() + kFramePrefixBytes, json_str.data(),
-              json_str.size());
+  std::memcpy(frame.data() + kFramePrefixBytes, encrypted.data(),
+              encrypted.size());
   return frame;
 }
 
@@ -255,20 +268,39 @@ bool decode_frame(const std::vector<std::uint8_t>& frame, Message& out,
   }
   std::uint32_t be_len = 0;
   std::memcpy(&be_len, frame.data(), sizeof(be_len));
-  const std::uint32_t payload_len = from_be32(be_len);
-  if (payload_len > kMaxPayloadSize) {
-    error = "payload too large";
-    return false;
-  }
-  if (frame.size() != kFramePrefixBytes + payload_len) {
+  const std::uint32_t encrypted_len = from_be32(be_len);
+
+  // Note: encrypted payload can be larger than kMaxPayloadSize due to padding
+  // We'll check the decrypted size instead
+
+  if (frame.size() != kFramePrefixBytes + encrypted_len) {
     error = "payload length mismatch";
     return false;
   }
 
-  std::string payload(reinterpret_cast<const char*>(frame.data() + kFramePrefixBytes),
-                      payload_len);
+  // Decrypt the encrypted payload
+  auto decrypted = decrypt_aes_cbc(
+      frame.data() + kFramePrefixBytes,
+      encrypted_len,
+      error
+  );
+  if (decrypted.empty()) {
+    error = "decryption failed: " + error;
+    return false;
+  }
+
+  // Reconstruct JSON string from decrypted bytes
+  std::string payload(reinterpret_cast<const char*>(decrypted.data()),
+                      decrypted.size());
+
+  // Check decrypted payload size
+  if (payload.size() > kMaxPayloadSize) {
+    error = "decrypted payload too large";
+    return false;
+  }
+
   if (!is_valid_utf8(payload)) {
-    error = "payload not valid UTF-8";
+    error = "decrypted payload not valid UTF-8";
     return false;
   }
 

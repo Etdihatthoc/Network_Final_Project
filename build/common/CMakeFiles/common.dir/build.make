@@ -100,10 +100,24 @@ common/CMakeFiles/common.dir/src/crypto.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/common.dir/src/crypto.cpp.s"
 	cd "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/common" && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/common/src/crypto.cpp" -o CMakeFiles/common.dir/src/crypto.cpp.s
 
+common/CMakeFiles/common.dir/src/aes_crypto.cpp.o: common/CMakeFiles/common.dir/flags.make
+common/CMakeFiles/common.dir/src/aes_crypto.cpp.o: /Users/dinhnguyenson/Documents/2025.1/Network\ Programming/Project/common/src/aes_crypto.cpp
+common/CMakeFiles/common.dir/src/aes_crypto.cpp.o: common/CMakeFiles/common.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object common/CMakeFiles/common.dir/src/aes_crypto.cpp.o"
+	cd "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/common" && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT common/CMakeFiles/common.dir/src/aes_crypto.cpp.o -MF CMakeFiles/common.dir/src/aes_crypto.cpp.o.d -o CMakeFiles/common.dir/src/aes_crypto.cpp.o -c "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/common/src/aes_crypto.cpp"
+
+common/CMakeFiles/common.dir/src/aes_crypto.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/common.dir/src/aes_crypto.cpp.i"
+	cd "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/common" && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/common/src/aes_crypto.cpp" > CMakeFiles/common.dir/src/aes_crypto.cpp.i
+
+common/CMakeFiles/common.dir/src/aes_crypto.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/common.dir/src/aes_crypto.cpp.s"
+	cd "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/common" && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/common/src/aes_crypto.cpp" -o CMakeFiles/common.dir/src/aes_crypto.cpp.s
+
 common/CMakeFiles/common.dir/src/placeholder.cpp.o: common/CMakeFiles/common.dir/flags.make
 common/CMakeFiles/common.dir/src/placeholder.cpp.o: /Users/dinhnguyenson/Documents/2025.1/Network\ Programming/Project/common/src/placeholder.cpp
 common/CMakeFiles/common.dir/src/placeholder.cpp.o: common/CMakeFiles/common.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object common/CMakeFiles/common.dir/src/placeholder.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object common/CMakeFiles/common.dir/src/placeholder.cpp.o"
 	cd "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/common" && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT common/CMakeFiles/common.dir/src/placeholder.cpp.o -MF CMakeFiles/common.dir/src/placeholder.cpp.o.d -o CMakeFiles/common.dir/src/placeholder.cpp.o -c "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/common/src/placeholder.cpp"
 
 common/CMakeFiles/common.dir/src/placeholder.cpp.i: cmake_force
@@ -118,6 +132,7 @@ common/CMakeFiles/common.dir/src/placeholder.cpp.s: cmake_force
 common_OBJECTS = \
 "CMakeFiles/common.dir/src/codec.cpp.o" \
 "CMakeFiles/common.dir/src/crypto.cpp.o" \
+"CMakeFiles/common.dir/src/aes_crypto.cpp.o" \
 "CMakeFiles/common.dir/src/placeholder.cpp.o"
 
 # External object files for target common
@@ -125,10 +140,11 @@ common_EXTERNAL_OBJECTS =
 
 common/libcommon.a: common/CMakeFiles/common.dir/src/codec.cpp.o
 common/libcommon.a: common/CMakeFiles/common.dir/src/crypto.cpp.o
+common/libcommon.a: common/CMakeFiles/common.dir/src/aes_crypto.cpp.o
 common/libcommon.a: common/CMakeFiles/common.dir/src/placeholder.cpp.o
 common/libcommon.a: common/CMakeFiles/common.dir/build.make
 common/libcommon.a: common/CMakeFiles/common.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX static library libcommon.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX static library libcommon.a"
 	cd "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/common" && $(CMAKE_COMMAND) -P CMakeFiles/common.dir/cmake_clean_target.cmake
 	cd "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/common" && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/common.dir/link.txt --verbose=$(VERBOSE)
 

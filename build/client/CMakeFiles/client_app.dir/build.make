@@ -131,6 +131,7 @@ client/client: common/libcommon.a
 client/client: client/libimgui.a
 client/client: /opt/homebrew/Cellar/sdl2/2.32.10/lib/libSDL2.dylib
 client/client: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/libsqlite3.tbd
+client/client: /opt/homebrew/Cellar/openssl@3/3.6.0/lib/libcrypto.dylib
 client/client: client/CMakeFiles/client_app.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable client"
 	cd "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/client" && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/client_app.dir/link.txt --verbose=$(VERBOSE)

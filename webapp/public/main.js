@@ -810,7 +810,7 @@ document.getElementById("btn-submit-exam").onclick = () => {
   }
   const answers = state.exam.questions.map((q) => ({
     question_id: q.id,
-    selected_option: q.answer || "A",
+    selected_option: q.answer || "",  // Empty string = câu chưa chọn = sai
   }));
   toast("Đang nộp bài...", "info");
   send("SUBMIT_EXAM", { exam_id: state.exam.exam_id, final_answers: answers });
@@ -826,7 +826,7 @@ document.getElementById("btn-start-prac").onclick = () => {
 document.getElementById("btn-submit-prac").onclick = () => {
   const answers = state.practice.questions.map((q) => ({
     question_id: q.id,
-    selected_option: q.answer || "A",
+    selected_option: q.answer || "",  // Empty string = câu chưa chọn = sai
   }));
   send("SUBMIT_PRACTICE", { practice_id: state.practice.practice_id, final_answers: answers });
 };
@@ -1017,7 +1017,7 @@ function autoSubmitExam() {
 
   const answers = state.exam.questions.map((q) => ({
     question_id: q.id,
-    selected_option: q.answer || "A",
+    selected_option: q.answer || "",  // Empty string = câu chưa chọn = sai
   }));
   send("SUBMIT_EXAM", { exam_id: state.exam.exam_id, final_answers: answers });
 }
@@ -1028,7 +1028,7 @@ function autoSubmitPractice() {
   state.practice_auto_submitted = true;
   const answers = state.practice.questions.map((q) => ({
     question_id: q.id,
-    selected_option: q.answer || "A",
+    selected_option: q.answer || "",  // Empty string = câu chưa chọn = sai
   }));
   send("SUBMIT_PRACTICE", { practice_id: state.practice.practice_id, final_answers: answers });
 }
@@ -1266,68 +1266,71 @@ function displayHistory(historyData) {
 
   let html = '';
 
-  // Average Score Summary
+  // Page Header
   html += '<div style="margin-bottom: 24px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; color: white;">';
-  html += '<h3 style="margin: 0 0 8px 0; font-size: 24px;">Your Average Score</h3>';
-  html += `<p style="margin: 0; font-size: 36px; font-weight: 700;">${(historyData.avg_score || 0).toFixed(1)}%</p>`;
+  html += '<h2 style="margin: 0; font-size: 28px; font-weight: 600;">📊 Kết quả thi của bạn</h2>';
   html += '</div>';
 
   // Exam History Table
   if (historyData.exams && historyData.exams.length > 0) {
     html += '<div style="margin-bottom: 24px;">';
     html += '<h3 style="margin: 0 0 12px 0; color: #1e293b; font-size: 20px;">📝 Exam History</h3>';
-    html += '<table style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">';
-    html += '<thead><tr style="background: #f8fafc;">';
+    html += '<div style="max-height: 70vh; overflow-y: auto; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">';
+    html += '<table style="width: 100%; border-collapse: collapse; background: white;">';
+    html += '<thead style="position: sticky; top: 0; z-index: 10; background: #f8fafc;"><tr style="background: #f8fafc;">';
     html += '<th style="padding: 12px; text-align: left; color: #6366f1; font-weight: 600; border-bottom: 2px solid #e2e8f0;">Room Name</th>';
-    html += '<th style="padding: 12px; text-align: center; color: #6366f1; font-weight: 600; border-bottom: 2px solid #e2e8f0;">Score</th>';
+    html += '<th style="padding: 12px; text-align: center; color: #6366f1; font-weight: 600; border-bottom: 2px solid #e2e8f0;">Correct Rate</th>';
     html += '<th style="padding: 12px; text-align: center; color: #6366f1; font-weight: 600; border-bottom: 2px solid #e2e8f0;">Correct/Total</th>';
     html += '<th style="padding: 12px; text-align: center; color: #6366f1; font-weight: 600; border-bottom: 2px solid #e2e8f0;">Submitted At</th>';
     html += '</tr></thead><tbody>';
 
     historyData.exams.forEach((exam, idx) => {
-      const score = exam.score || 0;
-      const scoreColor = score >= 80 ? '#10b981' : score >= 50 ? '#f59e0b' : '#ef4444';
+      const score = exam.score || 0;  // Score is 0-10
+      const scorePercent = score * 10;  // Convert to percentage
+      const scoreColor = scorePercent >= 80 ? '#10b981' : scorePercent >= 50 ? '#f59e0b' : '#ef4444';
       const bgColor = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
       const date = new Date((exam.submitted_at || 0) * 1000).toLocaleString();
 
       html += `<tr style="background: ${bgColor};">`;
       html += `<td style="padding: 12px; color: #1e293b; border-bottom: 1px solid #e2e8f0;">${exam.room_name || 'N/A'}</td>`;
-      html += `<td style="padding: 12px; text-align: center; font-weight: 700; font-size: 16px; color: ${scoreColor}; border-bottom: 1px solid #e2e8f0;">${score.toFixed(1)}%</td>`;
+      html += `<td style="padding: 12px; text-align: center; font-weight: 700; font-size: 16px; color: ${scoreColor}; border-bottom: 1px solid #e2e8f0;">${scorePercent.toFixed(1)}%</td>`;
       html += `<td style="padding: 12px; text-align: center; color: #475569; border-bottom: 1px solid #e2e8f0;">${exam.correct || 0}/${exam.total || 0}</td>`;
       html += `<td style="padding: 12px; text-align: center; color: #64748b; font-size: 13px; border-bottom: 1px solid #e2e8f0;">${date}</td>`;
       html += '</tr>';
     });
 
-    html += '</tbody></table></div>';
+    html += '</tbody></table></div></div>';
   }
 
   // Practice History Table
   if (historyData.practices && historyData.practices.length > 0) {
     html += '<div>';
     html += '<h3 style="margin: 0 0 12px 0; color: #1e293b; font-size: 20px;">💪 Practice History</h3>';
-    html += '<table style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">';
-    html += '<thead><tr style="background: #f8fafc;">';
+    html += '<div style="max-height: 70vh; overflow-y: auto; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">';
+    html += '<table style="width: 100%; border-collapse: collapse; background: white;">';
+    html += '<thead style="position: sticky; top: 0; z-index: 10; background: #f8fafc;"><tr style="background: #f8fafc;">';
     html += '<th style="padding: 12px; text-align: center; color: #6366f1; font-weight: 600; border-bottom: 2px solid #e2e8f0;">Practice #</th>';
-    html += '<th style="padding: 12px; text-align: center; color: #6366f1; font-weight: 600; border-bottom: 2px solid #e2e8f0;">Score</th>';
+    html += '<th style="padding: 12px; text-align: center; color: #6366f1; font-weight: 600; border-bottom: 2px solid #e2e8f0;">Correct Rate</th>';
     html += '<th style="padding: 12px; text-align: center; color: #6366f1; font-weight: 600; border-bottom: 2px solid #e2e8f0;">Correct/Total</th>';
     html += '<th style="padding: 12px; text-align: center; color: #6366f1; font-weight: 600; border-bottom: 2px solid #e2e8f0;">Submitted At</th>';
     html += '</tr></thead><tbody>';
 
     historyData.practices.forEach((practice, idx) => {
-      const score = practice.score || 0;
-      const scoreColor = score >= 80 ? '#10b981' : score >= 50 ? '#f59e0b' : '#ef4444';
+      const score = practice.score || 0;  // Score is 0-10
+      const scorePercent = score * 10;  // Convert to percentage
+      const scoreColor = scorePercent >= 80 ? '#10b981' : scorePercent >= 50 ? '#f59e0b' : '#ef4444';
       const bgColor = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
       const date = new Date((practice.submitted_at || 0) * 1000).toLocaleString();
 
       html += `<tr style="background: ${bgColor};">`;
       html += `<td style="padding: 12px; text-align: center; color: #1e293b; font-weight: 600; border-bottom: 1px solid #e2e8f0;">#${idx + 1}</td>`;
-      html += `<td style="padding: 12px; text-align: center; font-weight: 700; font-size: 16px; color: ${scoreColor}; border-bottom: 1px solid #e2e8f0;">${score.toFixed(1)}%</td>`;
+      html += `<td style="padding: 12px; text-align: center; font-weight: 700; font-size: 16px; color: ${scoreColor}; border-bottom: 1px solid #e2e8f0;">${scorePercent.toFixed(1)}%</td>`;
       html += `<td style="padding: 12px; text-align: center; color: #475569; border-bottom: 1px solid #e2e8f0;">${practice.correct || 0}/${practice.total || 0}</td>`;
       html += `<td style="padding: 12px; text-align: center; color: #64748b; font-size: 13px; border-bottom: 1px solid #e2e8f0;">${date}</td>`;
       html += '</tr>';
     });
 
-    html += '</tbody></table></div>';
+    html += '</tbody></table></div></div>';
   }
 
   // No history message

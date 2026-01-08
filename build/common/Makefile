@@ -140,6 +140,30 @@ common/fast:
 	cd "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build" && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/common.dir/build.make common/CMakeFiles/common.dir/build
 .PHONY : common/fast
 
+src/aes_crypto.o: src/aes_crypto.cpp.o
+.PHONY : src/aes_crypto.o
+
+# target to build an object file
+src/aes_crypto.cpp.o:
+	cd "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build" && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/common.dir/build.make common/CMakeFiles/common.dir/src/aes_crypto.cpp.o
+.PHONY : src/aes_crypto.cpp.o
+
+src/aes_crypto.i: src/aes_crypto.cpp.i
+.PHONY : src/aes_crypto.i
+
+# target to preprocess a source file
+src/aes_crypto.cpp.i:
+	cd "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build" && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/common.dir/build.make common/CMakeFiles/common.dir/src/aes_crypto.cpp.i
+.PHONY : src/aes_crypto.cpp.i
+
+src/aes_crypto.s: src/aes_crypto.cpp.s
+.PHONY : src/aes_crypto.s
+
+# target to generate assembly for a file
+src/aes_crypto.cpp.s:
+	cd "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build" && $(MAKE) $(MAKESILENT) -f common/CMakeFiles/common.dir/build.make common/CMakeFiles/common.dir/src/aes_crypto.cpp.s
+.PHONY : src/aes_crypto.cpp.s
+
 src/codec.o: src/codec.cpp.o
 .PHONY : src/codec.o
 
@@ -222,6 +246,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... common"
+	@echo "... src/aes_crypto.o"
+	@echo "... src/aes_crypto.i"
+	@echo "... src/aes_crypto.s"
 	@echo "... src/codec.o"
 	@echo "... src/codec.i"
 	@echo "... src/codec.s"

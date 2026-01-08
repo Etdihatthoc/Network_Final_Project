@@ -187,6 +187,15 @@ pre {
   overflow-y: auto;
   color: #1e293b;
 }
+
+/* Student History - larger display area */
+#results-student,
+#results-teacher {
+  max-height: 80vh;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
 .page { display: none; }
 .page.active { display: block; }
 

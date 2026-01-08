@@ -97,6 +97,7 @@ scripts/seed_db: scripts/CMakeFiles/seed_db.dir/seed.cpp.o
 scripts/seed_db: scripts/CMakeFiles/seed_db.dir/build.make
 scripts/seed_db: common/libcommon.a
 scripts/seed_db: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/libsqlite3.tbd
+scripts/seed_db: /opt/homebrew/Cellar/openssl@3/3.6.0/lib/libcrypto.dylib
 scripts/seed_db: scripts/CMakeFiles/seed_db.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable seed_db"
 	cd "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/scripts" && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/seed_db.dir/link.txt --verbose=$(VERBOSE)

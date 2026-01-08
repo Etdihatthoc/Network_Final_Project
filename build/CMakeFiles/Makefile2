@@ -1126,12 +1126,12 @@ CMakeFiles/ContinuousSubmit.dir/clean:
 common/CMakeFiles/common.dir/all:
 	$(MAKE) $(MAKESILENT) -f common/CMakeFiles/common.dir/build.make common/CMakeFiles/common.dir/depend
 	$(MAKE) $(MAKESILENT) -f common/CMakeFiles/common.dir/build.make common/CMakeFiles/common.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=7,8,9,10 "Built target common"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=7,8,9,10,11 "Built target common"
 .PHONY : common/CMakeFiles/common.dir/all
 
 # Build rule for subdir invocation for target.
 common/CMakeFiles/common.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" 4
+	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" 5
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 common/CMakeFiles/common.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" 0
 .PHONY : common/CMakeFiles/common.dir/rule
@@ -1143,7 +1143,7 @@ common: common/CMakeFiles/common.dir/rule
 # codegen rule for target.
 common/CMakeFiles/common.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f common/CMakeFiles/common.dir/build.make common/CMakeFiles/common.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=7,8,9,10 "Finished codegen for target common"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=7,8,9,10,11 "Finished codegen for target common"
 .PHONY : common/CMakeFiles/common.dir/codegen
 
 # clean rule for target.
@@ -1158,12 +1158,12 @@ common/CMakeFiles/common.dir/clean:
 scripts/CMakeFiles/seed_db.dir/all: common/CMakeFiles/common.dir/all
 	$(MAKE) $(MAKESILENT) -f scripts/CMakeFiles/seed_db.dir/build.make scripts/CMakeFiles/seed_db.dir/depend
 	$(MAKE) $(MAKESILENT) -f scripts/CMakeFiles/seed_db.dir/build.make scripts/CMakeFiles/seed_db.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=20,21 "Built target seed_db"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=21,22 "Built target seed_db"
 .PHONY : scripts/CMakeFiles/seed_db.dir/all
 
 # Build rule for subdir invocation for target.
 scripts/CMakeFiles/seed_db.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" 6
+	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" 7
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scripts/CMakeFiles/seed_db.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" 0
 .PHONY : scripts/CMakeFiles/seed_db.dir/rule
@@ -1175,7 +1175,7 @@ seed_db: scripts/CMakeFiles/seed_db.dir/rule
 # codegen rule for target.
 scripts/CMakeFiles/seed_db.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f scripts/CMakeFiles/seed_db.dir/build.make scripts/CMakeFiles/seed_db.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=20,21 "Finished codegen for target seed_db"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=21,22 "Finished codegen for target seed_db"
 .PHONY : scripts/CMakeFiles/seed_db.dir/codegen
 
 # clean rule for target.
@@ -1190,12 +1190,12 @@ scripts/CMakeFiles/seed_db.dir/clean:
 scripts/CMakeFiles/echo_client.dir/all: common/CMakeFiles/common.dir/all
 	$(MAKE) $(MAKESILENT) -f scripts/CMakeFiles/echo_client.dir/build.make scripts/CMakeFiles/echo_client.dir/depend
 	$(MAKE) $(MAKESILENT) -f scripts/CMakeFiles/echo_client.dir/build.make scripts/CMakeFiles/echo_client.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=11,12 "Built target echo_client"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=12,13 "Built target echo_client"
 .PHONY : scripts/CMakeFiles/echo_client.dir/all
 
 # Build rule for subdir invocation for target.
 scripts/CMakeFiles/echo_client.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" 6
+	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" 7
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scripts/CMakeFiles/echo_client.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" 0
 .PHONY : scripts/CMakeFiles/echo_client.dir/rule
@@ -1207,7 +1207,7 @@ echo_client: scripts/CMakeFiles/echo_client.dir/rule
 # codegen rule for target.
 scripts/CMakeFiles/echo_client.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f scripts/CMakeFiles/echo_client.dir/build.make scripts/CMakeFiles/echo_client.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=11,12 "Finished codegen for target echo_client"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=12,13 "Finished codegen for target echo_client"
 .PHONY : scripts/CMakeFiles/echo_client.dir/codegen
 
 # clean rule for target.
@@ -1222,12 +1222,12 @@ scripts/CMakeFiles/echo_client.dir/clean:
 server/CMakeFiles/server_app.dir/all: common/CMakeFiles/common.dir/all
 	$(MAKE) $(MAKESILENT) -f server/CMakeFiles/server_app.dir/build.make server/CMakeFiles/server_app.dir/depend
 	$(MAKE) $(MAKESILENT) -f server/CMakeFiles/server_app.dir/build.make server/CMakeFiles/server_app.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=22,23,24,25,26,27 "Built target server_app"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=23,24,25,26,27,28 "Built target server_app"
 .PHONY : server/CMakeFiles/server_app.dir/all
 
 # Build rule for subdir invocation for target.
 server/CMakeFiles/server_app.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" 10
+	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" 11
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 server/CMakeFiles/server_app.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" 0
 .PHONY : server/CMakeFiles/server_app.dir/rule
@@ -1239,7 +1239,7 @@ server_app: server/CMakeFiles/server_app.dir/rule
 # codegen rule for target.
 server/CMakeFiles/server_app.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f server/CMakeFiles/server_app.dir/build.make server/CMakeFiles/server_app.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=22,23,24,25,26,27 "Finished codegen for target server_app"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=23,24,25,26,27,28 "Finished codegen for target server_app"
 .PHONY : server/CMakeFiles/server_app.dir/codegen
 
 # clean rule for target.
@@ -1254,7 +1254,7 @@ server/CMakeFiles/server_app.dir/clean:
 client/CMakeFiles/imgui.dir/all:
 	$(MAKE) $(MAKESILENT) -f client/CMakeFiles/imgui.dir/build.make client/CMakeFiles/imgui.dir/depend
 	$(MAKE) $(MAKESILENT) -f client/CMakeFiles/imgui.dir/build.make client/CMakeFiles/imgui.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=13,14,15,16,17,18,19 "Built target imgui"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=14,15,16,17,18,19,20 "Built target imgui"
 .PHONY : client/CMakeFiles/imgui.dir/all
 
 # Build rule for subdir invocation for target.
@@ -1271,7 +1271,7 @@ imgui: client/CMakeFiles/imgui.dir/rule
 # codegen rule for target.
 client/CMakeFiles/imgui.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f client/CMakeFiles/imgui.dir/build.make client/CMakeFiles/imgui.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=13,14,15,16,17,18,19 "Finished codegen for target imgui"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=14,15,16,17,18,19,20 "Finished codegen for target imgui"
 .PHONY : client/CMakeFiles/imgui.dir/codegen
 
 # clean rule for target.
@@ -1292,7 +1292,7 @@ client/CMakeFiles/client_app.dir/all: client/CMakeFiles/imgui.dir/all
 
 # Build rule for subdir invocation for target.
 client/CMakeFiles/client_app.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" 15
+	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" 16
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 client/CMakeFiles/client_app.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" 0
 .PHONY : client/CMakeFiles/client_app.dir/rule
@@ -1324,7 +1324,7 @@ tests/CMakeFiles/codec_tests.dir/all: common/CMakeFiles/common.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/codec_tests.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" 6
+	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" 7
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/codec_tests.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" 0
 .PHONY : tests/CMakeFiles/codec_tests.dir/rule

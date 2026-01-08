@@ -97,6 +97,7 @@ scripts/echo_client: scripts/CMakeFiles/echo_client.dir/echo_client.cpp.o
 scripts/echo_client: scripts/CMakeFiles/echo_client.dir/build.make
 scripts/echo_client: common/libcommon.a
 scripts/echo_client: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/libsqlite3.tbd
+scripts/echo_client: /opt/homebrew/Cellar/openssl@3/3.6.0/lib/libcrypto.dylib
 scripts/echo_client: scripts/CMakeFiles/echo_client.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable echo_client"
 	cd "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/scripts" && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/echo_client.dir/link.txt --verbose=$(VERBOSE)

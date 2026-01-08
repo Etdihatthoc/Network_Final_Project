@@ -161,6 +161,7 @@ server/server: server/CMakeFiles/server_app.dir/src/thread_pool.cpp.o
 server/server: server/CMakeFiles/server_app.dir/build.make
 server/server: common/libcommon.a
 server/server: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib/libsqlite3.tbd
+server/server: /opt/homebrew/Cellar/openssl@3/3.6.0/lib/libcrypto.dylib
 server/server: server/CMakeFiles/server_app.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir="/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable server"
 	cd "/Users/dinhnguyenson/Documents/2025.1/Network Programming/Project/build/server" && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/server_app.dir/link.txt --verbose=$(VERBOSE)
